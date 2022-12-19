@@ -29,7 +29,7 @@
         <EditText
             android:id="@+id/edit_imc_height"
             style="@style/EditTextForm"
-            android:hint="@string/weight"
+            android:hint="@string/height"
             android:autofillHints="" />
 
         <Button
