@@ -22,4 +22,5 @@
 
     <string name="save">Salvar</string>
     <string name="saved">Registro salvo com sucesso</string>
+    <string name="search">buscar</string>
 </resources>
