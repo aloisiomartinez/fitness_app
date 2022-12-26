@@ -1,4 +1,4 @@
-package co.aloisiomartinez.fitnesstracker
+package co.tiagoaguiar.fitnesstracker
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

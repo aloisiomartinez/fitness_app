@@ -1,4 +1,4 @@
-package co.aloisiomartinez.fitnesstracker
+package co.tiagoaguiar.fitnesstracker
 
 import android.content.Intent
 import android.graphics.Color
@@ -15,11 +15,9 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-class MainActivity : AppCompatActivity(), OnItemClickListener {
+class MainActivity : AppCompatActivity() {
 
-    //    private lateinit var btnImc: LinearLayout
     private lateinit var rvMain: RecyclerView
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,14 +35,26 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
         mainItems.add(
             MainItem(
                 id = 2,
-                drawableId = R.drawable.ic_baseline_remove_red_eye_24,
-                textStringId = R.string.tmb,
+                drawableId = R.drawable.ic_baseline_visibility_24,
+                textStringId = R.string.label_tmb,
                 color = Color.YELLOW
             )
         )
 
 
-        val adapter = MainAdapter(mainItems, this)
+        val adapter = MainAdapter(mainItems) { id ->
+            when (id) {
+                1 -> {
+                    val intent = Intent(this@MainActivity, ImcActivity::class.java)
+                    startActivity(intent)
+                }
+                2 -> {
+
+                }
+            }
+
+        }
+
         rvMain = findViewById(R.id.rv_main)
         rvMain.adapter = adapter
         rvMain.layoutManager = GridLayoutManager(this, 2)
@@ -52,30 +62,16 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
 
     }
 
-    override fun onClick(id: Int) {
-        when(id) {
-            1 -> {
-                val intent = Intent(this, ImcActivity::class.java)
-                startActivity(intent)
-            }
-            2 -> {
-                val intent = Intent(this, ImcActivity::class.java)
-                startActivity(intent)
-            }
-        }
-    }
 
     private inner class MainAdapter(
         private val mainItems: List<MainItem>,
-        private val onItemClickListener: OnItemClickListener
-    ) :
-        RecyclerView.Adapter<MainAdapter.MainViewHolder>() {
+        private val onItemClickListener: (Int) -> Unit,
+        ) : RecyclerView.Adapter<MainAdapter.MainViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
             val view = layoutInflater.inflate(R.layout.main_item, parent, false)
             return MainViewHolder(view)
         }
-
 
         override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
             val itemCurrent = mainItems[position]
@@ -95,11 +91,12 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
                 img.setImageResource(item.drawableId)
                 name.setText(item.textStringId)
                 container.setBackgroundColor(item.color)
-                container.setOnClickListener{
-                    onItemClickListener.onClick(item.id)
-                }
 
+                container.setOnClickListener {
+                    onItemClickListener.invoke(item.id)
+                }
             }
         }
+
     }
 }

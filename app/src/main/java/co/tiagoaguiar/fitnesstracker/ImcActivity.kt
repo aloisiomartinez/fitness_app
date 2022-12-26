@@ -1,7 +1,8 @@
-package co.aloisiomartinez.fitnesstracker
+package co.tiagoaguiar.fitnesstracker
 
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -11,9 +12,10 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
-import co.aloisiomartinez.fitnesstracker.model.Calc
+import co.tiagoaguiar.fitnesstracker.model.Calc
 
 class ImcActivity : AppCompatActivity() {
+
     private lateinit var editWeight: EditText
     private lateinit var editHeight: EditText
 
@@ -25,9 +27,10 @@ class ImcActivity : AppCompatActivity() {
         editHeight = findViewById(R.id.edit_imc_height)
 
         val btnSend: Button = findViewById(R.id.btn_imc_send)
+
         btnSend.setOnClickListener {
-            if (!validade()) {
-                Toast.makeText(this, R.string.fields_message, Toast.LENGTH_SHORT).show()
+            if (!validate()) {
+                Toast.makeText(this, R.string.fields_messages, Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -35,23 +38,26 @@ class ImcActivity : AppCompatActivity() {
             val height = editHeight.text.toString().toInt()
 
             val result = calculateImc(weight, height)
-            Log.d("Teste", "result: $result")
+            Log.d("Teste", "resultado: $result")
 
             val imcResponseId = imcResponse(result)
+
             AlertDialog.Builder(this)
                 .setTitle(getString(R.string.imc_response, result))
                 .setMessage(imcResponseId)
-                .setPositiveButton(
-                    android.R.string.ok
-                ) { dialog, which -> }
-                .setNegativeButton(R.string.save) {dialog, which ->
+                .setPositiveButton(android.R.string.ok) { dialog, which ->
+                    // aqui vai rodar depois do click
+                }
+                .setNegativeButton(R.string.save) { dialog, which ->
                     Thread {
-                        val app = (application as App)
+                        val app = application as App
                         val dao = app.db.calcDao()
                         dao.insert(Calc(type = "imc", res = result))
 
                         runOnUiThread {
-                            Toast.makeText(this@ImcActivity, R.string.calc_saved, Toast.LENGTH_LONG).show()
+                            val intent = Intent(this@ImcActivity, ListCalcActivity::class.java)
+                            intent.putExtra("type", "imc")
+                            startActivity(intent)
                         }
                     }.start()
 
@@ -76,16 +82,17 @@ class ImcActivity : AppCompatActivity() {
             imc < 40.0 -> R.string.imc_severely_high_weight
             else -> R.string.imc_extreme_weight
         }
-
-    }
-
-    private fun validade(): Boolean {
-        return editWeight.text.toString().isNotEmpty() && editHeight.text.toString()
-            .isNotEmpty() && !editWeight.text.toString().startsWith("0") &&
-                !editHeight.text.toString().startsWith("0")
     }
 
     private fun calculateImc(weight: Int, height: Int): Double {
-        return weight / ((height / 100.0) * (height / 100.0))
+        return weight / ( (height / 100.0) * (height / 100.0) )
     }
+
+    private fun validate(): Boolean {
+        return (editWeight.text.toString().isNotEmpty()
+            && editHeight.text.toString().isNotEmpty()
+            && !editWeight.text.toString().startsWith("0")
+            && !editHeight.text.toString().startsWith("0"))
+    }
+
 }
