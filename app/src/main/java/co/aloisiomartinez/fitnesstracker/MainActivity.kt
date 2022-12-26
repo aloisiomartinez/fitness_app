@@ -20,6 +20,7 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
     //    private lateinit var btnImc: LinearLayout
     private lateinit var rvMain: RecyclerView
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -41,22 +42,7 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
                 color = Color.YELLOW
             )
         )
-        mainItems.add(
-            MainItem(
-                id = 3,
-                drawableId = R.drawable.ic_baseline_remove_red_eye_24,
-                textStringId = R.string.tmb,
-                color = Color.BLUE
-            )
-        )
-        mainItems.add(
-            MainItem(
-                id = 4,
-                drawableId = R.drawable.ic_baseline_remove_red_eye_24,
-                textStringId = R.string.tmb,
-                color = Color.BLACK
-            )
-        )
+
 
         val adapter = MainAdapter(mainItems, this)
         rvMain = findViewById(R.id.rv_main)
@@ -77,7 +63,6 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
                 startActivity(intent)
             }
         }
-        TODO("Not yet implemented")
     }
 
     private inner class MainAdapter(
